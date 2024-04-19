@@ -1,46 +1,44 @@
 const express = require('express');
 const app = express();
-const Listing=require("./models/listing.js");
+const Listing = require("./models/listing.js");
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/themajordb');
 
-//to connect the database
-const MONGO_URL="mongodb://127.0.0.1:27017/themajordb";
-
-main()
-.then(()=>{
-    console.log("the database is connected");
-})
-
-.catch((err)=>{
-    console.log(err);
-});
-
+const MONGO_URL = "mongodb+srv://dakshika:Project@12344@cluster0.wvabpjk.mongodb.net/test"
 
 async function main() {
-    await mongoose.connect(MONGO_URL);
-
+    try {
+        await mongoose.connect(MONGO_URL);
+        console.log("Connected to the database");
+    } catch (error) {
+        console.error("Error connecting to the database:", error);
+    }
 }
-//browser is connected-check
-app.get("/",(req,res)=>{
-    res.send("hi browser is connected");
+
+main();
+
+app.get("/", (req, res) => {
+    res.send("Hi, browser is connected");
 });
 
-//server is connected-check
-app.listen(8080,()=>{
-    console.log("the server is listening");
+app.listen(8080, () => {
+    console.log("Server is listening on port 8080");
 });
 
-app.get("/testlisting",async(req,res)=>{
-let samplelisting=new Listing({
-title:"My New Villa",
-description:"By the Beach",
-price:1200,
-location:"pune",
-country:"India",
-});
+app.get("/testlisting", async (req, res) => {
+    try {
+        let sampleListing = new Listing({
+            title: "My New Villa",
+            description: "By the Beach",
+            price: 1200,
+            location: "Pune",
+            country: "India"
+        });
 
-await samplelisting.save();
-console.log("sample data is saved");
-res.send("successfully saved the sample data");
+        await sampleListing.save();
+        console.log("Sample data saved successfully");
+        res.send("Successfully saved the sample data");
+    } catch (error) {
+        console.error("Error saving sample data:", error);
+        res.status(500).send("Error saving sample data");
+    }
 });
